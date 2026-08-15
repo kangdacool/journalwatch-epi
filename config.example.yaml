@@ -37,7 +37,6 @@ curation:
     - "target trial emulation"
     - "biological aging / epigenetic clocks"
     - "chronic disease multimorbidity"
-    - "environmental epidemiology"
 
 notion:
   parent_page_id: ""   # notion_sync.py 상단 준비 절차 참조. 비워두면 Notion push는 생략됨.

@@ -83,7 +83,7 @@ SCHEMA = {
 
 DEFAULT_INTEREST_TAGS = [
     "causal inference", "target trial emulation", "biological aging / epigenetic clocks",
-    "chronic disease multimorbidity", "environmental epidemiology",
+    "chronic disease multimorbidity",
 ]
 
 
