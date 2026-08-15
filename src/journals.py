@@ -245,17 +245,36 @@ def search_journal(ctx, name: str, country_hint: str = None):
         # 반대로 더 긴 제목의 연속(예: "Epidemiology and Infection...")은 공백+소문자로 이어진다
         # ("Epidemiology" + " and..."). 그래서 경계문자가 "대문자"여야 country 접합이고, 아니면
         # (공백 등) 다른 제목의 부분일치다 — 실측으로 두 방향 다 뒤집힌 채 확인됨(2026-08-15).
+        # 세 번째 경계: Scimago는 동명이의 저널을 "Health Economics (United Kingdom)"처럼 제목
+        # 자체에 " (국가)"를 붙여 구분하기도 한다(실측 확인 2026-08-16) — 이것도 "정확한 제목"으로
+        # 인정한다.
         n = len(name)
-        return text[:n].lower() == name.lower() and (len(text) == n or text[n].isupper())
+        if text[:n].lower() != name.lower():
+            return False
+        rest = text[n:]
+        return rest == "" or rest[0].isupper() or rest.startswith(" (")
 
     exact = [c for c in candidates if starts_exactly(c["text"])]
     if country_hint:
         for c in exact:
-            if c["text"][len(name):].lower().startswith(country_hint.lower()):
+            tail = c["text"][len(name):]
+            if tail.lower().startswith(country_hint.lower()) or f"({country_hint.lower()})" in tail.lower():
                 return c["id"]
-    if exact:
+    if len(exact) == 1:
         return exact[0]["id"]
-    return candidates[0]["id"]
+    if len(exact) > 1:
+        # 여러 개가 "정확히 일치"하면(예: 국가만 다른 동명 저널) country_hint 없이는 못 고른다 —
+        # 추측하지 말고 실패시켜서 config.yaml에 country를 채우게 한다.
+        log.warning(f"[journals] '{name}' 검색결과 정확일치 {len(exact)}건 — country 힌트 필요: "
+                    f"{[c['text'] for c in exact]}")
+        return None
+    # exact가 비었다고 candidates[0](느슨한 관련도 순위 1위)로 그냥 넘어가지 않는다 — 실측 사고
+    # (2026-08-16): "Health Economics" 검색이 정확일치 0건인 채로 "Journal of Health Economics"에
+    # 조용히 붙어버림(Scimago의 실제 제목은 "Health Economics (United Kingdom)"이었음). 후보를
+    # 전부 보여주고 실패시킨다 — 사용자가 config.yaml의 name을 Scimago 실제 제목으로 고치게.
+    log.warning(f"[journals] '{name}' 정확일치 없음 — config.yaml의 name을 Scimago 실제 제목으로 "
+                f"고쳐야 함. 후보: {[c['text'] for c in candidates[:5]]}")
+    return None
 
 
 def build_journal_universe(force=False):
