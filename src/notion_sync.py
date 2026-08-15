@@ -27,7 +27,7 @@ import json
 from dotenv import load_dotenv
 from notion_client import Client
 
-from common import load_config, get_logger, PROJ_ROOT, today_stamp
+from common import load_config, get_logger, PROJ_ROOT, DATA_DIR, today_stamp
 
 log = get_logger()
 load_dotenv(os.path.join(PROJ_ROOT, ".env"))
@@ -65,6 +65,32 @@ def get_client() -> Client:
     return Client(auth=token, notion_version=NOTION_VERSION)
 
 
+def _load_journal_order() -> dict:
+    """journals.json에 저널이 등장하는 순서(지정 목록 먼저, 그다음 Scimago SJR 내림차순)를
+    그대로 표 정렬 기준으로 쓴다 — 매일 같은 순서라 사용자가 익힐 수 있다. 이름 매칭은
+    fetch_pubmed.py가 각 논문에 남긴 source_journal_query(그 논문을 찾아낸 질의의 저널명,
+    journals.json의 name과 정확히 같은 문자열)로 한다 — PubMed가 돌려주는 journal 필드는
+    표기가 제각각(대소문자·약어)이라 그걸로 매칭하면 깨진다."""
+    path = os.path.join(DATA_DIR, "journals.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return {j["name"]: i for i, j in enumerate(data.get("journals", []))}
+
+
+def _sort_by_journal(written_pairs, journal_order):
+    big = len(journal_order) + 1
+    return sorted(
+        written_pairs,
+        key=lambda pa: (
+            journal_order.get(pa[0].get("source_journal_query"), big),
+            pa[0].get("journal", ""),
+            pa[0].get("title", ""),
+        ),
+    )
+
+
 def _group_by_primary_category(written_pairs):
     groups = {k: [] for k in CATEGORY_ORDER}
     for paper, assessment in written_pairs:
@@ -92,10 +118,12 @@ def build_digest_markdown(written_pairs: list) -> str:
         "",
     ]
 
-    # ----- 요약표: 전체를 한눈에 스캔하는 용도 -----
+    # ----- 요약표: 저널별로 묶어서(매일 같은 순서라 눈에 익음) 한눈에 스캔 -----
+    journal_order = _load_journal_order()
+    table_rows = _sort_by_journal(written_pairs, journal_order)
     lines.append("| 저널 | 제목 | 범주 | 한줄요약 |")
     lines.append("| --- | --- | --- | --- |")
-    for paper, assessment in written_pairs:
+    for paper, assessment in table_rows:
         journal = _table_cell(paper.get("journal", ""), 30)
         title = _table_cell(bullet_text(paper.get("title", "")), 60)
         cats = ", ".join(assessment.get("categories", [])) or "-"
