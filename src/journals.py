@@ -283,8 +283,15 @@ def build_journal_universe(force=False):
             browser = p.chromium.connect_over_cdp(f"http://127.0.0.1:{CDP_PORT}")
             ctx = browser.contexts[0]
 
-            log.info(f"[journals] Scimago category={category_id} {quartiles} 수집 중...")
-            scimago_hits = fetch_scimago_category(ctx, category_id, quartiles)
+            if quartiles:
+                log.info(f"[journals] Scimago category={category_id} {quartiles} 수집 중...")
+                scimago_hits = fetch_scimago_category(ctx, category_id, quartiles)
+            else:
+                # scimago_quartiles: [] → 안전망 자체를 끈다(카테고리가 너무 넓어서 지정 목록만
+                # 쓰고 싶을 때 — 예: 직업환경의학의 Scimago 카테고리는 일반 보건정책 저널까지
+                # 섞여 있어 지정 목록만으로 충분한 경우).
+                log.info("[journals] scimago_quartiles가 비어있음 — Scimago 안전망 생략")
+                scimago_hits = []
             log.info(f"[journals] {len(scimago_hits)}개 발견, 상세정보(ISSN·SJR) 조회 중...")
             for j in scimago_hits:
                 info = get_detail_info(ctx, j["scimago_id"])
