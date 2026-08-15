@@ -66,17 +66,21 @@ def get_client() -> Client:
 
 
 def _load_journal_order() -> dict:
-    """journals.json에 저널이 등장하는 순서(지정 목록 먼저, 그다음 Scimago SJR 내림차순)를
-    그대로 표 정렬 기준으로 쓴다 — 매일 같은 순서라 사용자가 익힐 수 있다. 이름 매칭은
-    fetch_pubmed.py가 각 논문에 남긴 source_journal_query(그 논문을 찾아낸 질의의 저널명,
-    journals.json의 name과 정확히 같은 문자열)로 한다 — PubMed가 돌려주는 journal 필드는
-    표기가 제각각(대소문자·약어)이라 그걸로 매칭하면 깨진다."""
+    """journals.json의 저널을 SJR 점수 내림차순으로 정렬한 순위를 표 정렬 기준으로 쓴다
+    — 지정 목록/Scimago 출처 구분 없이 하나의 척도로 순위를 매긴다(사용자 요청: "그냥
+    SJR 순위대로"). 매일 같은 순서라 사용자가 익힐 수 있다. 이름 매칭은 fetch_pubmed.py가
+    각 논문에 남긴 source_journal_query(그 논문을 찾아낸 질의의 저널명, journals.json의
+    name과 정확히 같은 문자열)로 한다 — PubMed가 돌려주는 journal 필드는 표기가 제각각
+    (대소문자·약어)이라 그걸로 매칭하면 깨진다. SJR이 없는 저널(조회 실패)은 맨 뒤로."""
     path = os.path.join(DATA_DIR, "journals.json")
     if not os.path.exists(path):
         return {}
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    return {j["name"]: i for i, j in enumerate(data.get("journals", []))}
+    journals = data.get("journals", [])
+    ranked = sorted(journals, key=lambda j: j.get("sjr") if j.get("sjr") is not None else -1,
+                     reverse=True)
+    return {j["name"]: i for i, j in enumerate(ranked)}
 
 
 def _sort_by_journal(written_pairs, journal_order):

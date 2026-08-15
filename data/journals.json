@@ -1,6 +1,6 @@
 {
-  "resolved_at": "2026-08-15T16:41:08.437887",
-  "category": "Epidemiology (Scimago id=2713)",
+  "resolved_at": "2026-08-15T23:51:26.260095",
+  "category": "Scimago category id=2713, quartiles=['Q1']",
   "journals": [
     {
       "name": "American Journal of Epidemiology",
@@ -9,7 +9,8 @@
         "0002-9262",
         "1476-6256"
       ],
-      "quartile": null,
+      "sjr": 1.955,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -19,7 +20,8 @@
         "0300-5771",
         "1464-3685"
       ],
-      "quartile": null,
+      "sjr": 2.365,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -29,7 +31,8 @@
         "1044-3983",
         "1531-5487"
       ],
-      "quartile": null,
+      "sjr": 1.406,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -38,7 +41,8 @@
       "issn": [
         "2092-7193"
       ],
-      "quartile": null,
+      "sjr": 0.895,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -47,7 +51,8 @@
       "issn": [
         "2468-2667"
       ],
-      "quartile": null,
+      "sjr": 8.25,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -57,7 +62,8 @@
         "1975-8375",
         "2233-4521"
       ],
-      "quartile": null,
+      "sjr": 1.115,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -67,7 +73,8 @@
         "0393-2990",
         "1573-7284"
       ],
-      "quartile": null,
+      "sjr": 2.522,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -77,7 +84,8 @@
         "1047-2797",
         "1873-2585"
       ],
-      "quartile": null,
+      "sjr": 0.979,
+      "quartile": "Q2",
       "source": "named"
     },
     {
@@ -87,7 +95,8 @@
         "0090-0036",
         "1541-0048"
       ],
-      "quartile": null,
+      "sjr": 1.407,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -97,7 +106,8 @@
         "1549-1277",
         "1549-1676"
       ],
-      "quartile": null,
+      "sjr": 3.573,
+      "quartile": "Q1",
       "source": "named"
     },
     {
@@ -108,7 +118,8 @@
         "1057-5987",
         "1545-8601"
       ],
-      "source": "scimago_q1"
+      "sjr": 27.974,
+      "source": "scimago"
     },
     {
       "name": "MMWR Surveillance Summaries",
@@ -118,7 +129,8 @@
         "1545-8636",
         "1546-0738"
       ],
-      "source": "scimago_q1"
+      "sjr": 14.728,
+      "source": "scimago"
     },
     {
       "name": "Morbidity and Mortality Weekly Report",
@@ -128,7 +140,8 @@
         "0149-2195",
         "1545-861X"
       ],
-      "source": "scimago_q1"
+      "sjr": 8.38,
+      "source": "scimago"
     },
     {
       "name": "Clinical Microbiology Reviews",
@@ -138,7 +151,8 @@
         "0893-8512",
         "1098-6618"
       ],
-      "source": "scimago_q1"
+      "sjr": 6.584,
+      "source": "scimago"
     },
     {
       "name": "The Lancet HIV",
@@ -147,7 +161,8 @@
       "issn": [
         "2352-3018"
       ],
-      "source": "scimago_q1"
+      "sjr": 4.757,
+      "source": "scimago"
     },
     {
       "name": "Alzheimer's and Dementia",
@@ -157,7 +172,8 @@
         "1552-5260",
         "1552-5279"
       ],
-      "source": "scimago_q1"
+      "sjr": 4.53,
+      "source": "scimago"
     },
     {
       "name": "Journal of the American Society of Nephrology",
@@ -167,7 +183,8 @@
         "1046-6673",
         "1533-3450"
       ],
-      "source": "scimago_q1"
+      "sjr": 3.421,
+      "source": "scimago"
     },
     {
       "name": "Eurosurveillance",
@@ -177,7 +194,8 @@
         "1025-496X",
         "1560-7917"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.81,
+      "source": "scimago"
     },
     {
       "name": "European Journal of Preventive Cardiology",
@@ -187,7 +205,8 @@
         "2047-4873",
         "2047-4881"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.6,
+      "source": "scimago"
     },
     {
       "name": "Journal of Clinical Epidemiology",
@@ -197,7 +216,8 @@
         "0895-4356",
         "1878-5921"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.507,
+      "source": "scimago"
     },
     {
       "name": "Clinical Journal of the American Society of Nephrology",
@@ -207,7 +227,8 @@
         "1555-9041",
         "1555-905X"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.491,
+      "source": "scimago"
     },
     {
       "name": "Emerging Microbes and Infections",
@@ -216,7 +237,8 @@
       "issn": [
         "2222-1751"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.269,
+      "source": "scimago"
     },
     {
       "name": "Communications Medicine",
@@ -225,7 +247,8 @@
       "issn": [
         "2730-664X"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.138,
+      "source": "scimago"
     },
     {
       "name": "Epidemiology and Psychiatric Sciences",
@@ -235,7 +258,8 @@
         "2045-7960",
         "2045-7979"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.051,
+      "source": "scimago"
     },
     {
       "name": "Emerging Infectious Diseases",
@@ -245,7 +269,8 @@
         "1080-6040",
         "1080-6059"
       ],
-      "source": "scimago_q1"
+      "sjr": 2.034,
+      "source": "scimago"
     },
     {
       "name": "American Journal of Preventive Medicine",
@@ -255,7 +280,8 @@
         "0749-3797",
         "1873-2607"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.979,
+      "source": "scimago"
     },
     {
       "name": "Journal of Exposure Science and Environmental Epidemiology",
@@ -265,7 +291,8 @@
         "1559-0631",
         "1559-064X"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.876,
+      "source": "scimago"
     },
     {
       "name": "Epidemiologic Reviews",
@@ -275,7 +302,8 @@
         "0193-936X",
         "1478-6729"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.866,
+      "source": "scimago"
     },
     {
       "name": "Clinical Epidemiology",
@@ -284,7 +312,8 @@
       "issn": [
         "1179-1349"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.663,
+      "source": "scimago"
     },
     {
       "name": "Journal of Health Monitoring",
@@ -293,7 +322,8 @@
       "issn": [
         "2511-2708"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.661,
+      "source": "scimago"
     },
     {
       "name": "Influenza and other Respiratory Viruses",
@@ -303,7 +333,8 @@
         "1750-2640",
         "1750-2659"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.632,
+      "source": "scimago"
     },
     {
       "name": "Social Psychiatry and Psychiatric Epidemiology",
@@ -313,7 +344,8 @@
         "0933-7954",
         "1433-9285"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.584,
+      "source": "scimago"
     },
     {
       "name": "Microbial Genomics",
@@ -322,7 +354,8 @@
       "issn": [
         "2057-5858"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.575,
+      "source": "scimago"
     },
     {
       "name": "Global Health Research and Policy",
@@ -331,7 +364,8 @@
       "issn": [
         "2397-0642"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.551,
+      "source": "scimago"
     },
     {
       "name": "GeoHealth",
@@ -340,7 +374,8 @@
       "issn": [
         "2471-1403"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.515,
+      "source": "scimago"
     },
     {
       "name": "Neuroepidemiology",
@@ -350,7 +385,8 @@
         "0251-5350",
         "1423-0208"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.511,
+      "source": "scimago"
     },
     {
       "name": "Journal of Epidemiology and Community Health",
@@ -360,7 +396,8 @@
         "0143-005X",
         "1470-2738"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.441,
+      "source": "scimago"
     },
     {
       "name": "BMC Medical Research Methodology",
@@ -369,7 +406,8 @@
       "issn": [
         "1471-2288"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.426,
+      "source": "scimago"
     },
     {
       "name": "Cancer Epidemiology Biomarkers and Prevention",
@@ -379,7 +417,8 @@
         "1055-9965",
         "1538-7755"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.426,
+      "source": "scimago"
     },
     {
       "name": "Preventive Medicine",
@@ -389,7 +428,8 @@
         "0091-7435",
         "1096-0260"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.424,
+      "source": "scimago"
     },
     {
       "name": "Global Heart",
@@ -399,7 +439,8 @@
         "2211-8160",
         "2211-8179"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.325,
+      "source": "scimago"
     },
     {
       "name": "Genetic Epidemiology",
@@ -409,7 +450,8 @@
         "0741-0395",
         "1098-2272"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.296,
+      "source": "scimago"
     },
     {
       "name": "Population Health Metrics",
@@ -418,7 +460,8 @@
       "issn": [
         "1478-7954"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.225,
+      "source": "scimago"
     },
     {
       "name": "Health Promotion and Chronic Disease Prevention in Canada : Research, Policy and Practice",
@@ -427,7 +470,8 @@
       "issn": [
         "2368-738X"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.204,
+      "source": "scimago"
     },
     {
       "name": "Paediatric and Perinatal Epidemiology",
@@ -437,7 +481,8 @@
         "0269-5022",
         "1365-3016"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.16,
+      "source": "scimago"
     },
     {
       "name": "Health Care Science",
@@ -447,7 +492,8 @@
         "2771-1749",
         "2771-1757"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.152,
+      "source": "scimago"
     },
     {
       "name": "Environmental Epidemiology",
@@ -456,7 +502,8 @@
       "issn": [
         "2474-7882"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.126,
+      "source": "scimago"
     },
     {
       "name": "Journal of Epidemiology",
@@ -466,7 +513,8 @@
         "0917-5040",
         "1349-9092"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.121,
+      "source": "scimago"
     },
     {
       "name": "Statistics in Medicine",
@@ -476,7 +524,8 @@
         "0277-6715",
         "1097-0258"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.102,
+      "source": "scimago"
     },
     {
       "name": "Journal of Epidemiology and Global Health",
@@ -486,7 +535,8 @@
         "2210-6006",
         "2210-6014"
       ],
-      "source": "scimago_q1"
+      "sjr": 1.09,
+      "source": "scimago"
     }
   ]
 }

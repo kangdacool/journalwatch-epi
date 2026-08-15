@@ -96,25 +96,47 @@ def launch_cdp_chrome():
     raise RuntimeError("CDP Chrome이 기동하지 않았습니다.")
 
 
-def goto_robust(ctx, url, tries=3, settle_ms=2500):
-    """Cloudflare 챌린지/광고 리다이렉트(2mdn.net 등)로 페이지가 튕기는 경우가 있어
-    매번 새 탭을 열고, scimagojr.com에 안착했는지 확인 후 아니면 재시도한다(실측 확인 필요했던
-    사항 — 새로 만든 프로필에서 카테고리 페이지로 바로 진입하면 0건이 나오는 문제가 있었음)."""
+def _looks_like_challenge(page) -> bool:
+    """Cloudflare 챌린지 페이지는 scimagojr.com URL을 유지한 채(리다이렉트 없이) 뜨기도 해서
+    URL 체크만으론 못 거른다(실측 확인: 2026-08-15, journals.json이 10개로 조용히 깨진 사고의
+    원인) — 본문에서 챌린지 특유 문구를 찾는다."""
+    try:
+        body = page.inner_text("body")[:500].lower()
+    except Exception:
+        return True
+    markers = ("checking your browser", "사람인지 확인", "확인 중", "cloudflare",
+               "잠시만 기다려", "ray id")
+    return any(m in body for m in markers)
+
+
+def goto_robust(ctx, url, tries=5, settle_ms=3000, verify=None):
+    """매번 새 탭을 열고, (1) scimagojr.com에 안착했는지 + (2) 챌린지 페이지가 아닌지 +
+    (3) verify(page)가 주어졌으면 그것도 참인지 확인한 뒤에만 페이지를 반환한다. 광고
+    리다이렉트(2mdn.net 등)·Cloudflare 챌린지 둘 다 실측으로 걸린 적 있어 매 단계 재시도."""
     last_url = None
+    last_reason = None
     for attempt in range(1, tries + 1):
         page = ctx.new_page()
         try:
             page.goto(url, wait_until="domcontentloaded", timeout=30000)
-        except Exception:
+        except Exception as e:
             page.close()
+            last_reason = f"goto 실패: {e}"
+            time.sleep(1.5)
             continue
         page.wait_for_timeout(settle_ms)
         last_url = page.url
-        if "scimagojr.com" in last_url:
+        if "scimagojr.com" not in last_url:
+            last_reason = f"다른 도메인으로 리다이렉트됨: {last_url}"
+        elif _looks_like_challenge(page):
+            last_reason = "Cloudflare 챌린지 페이지로 판단됨"
+        elif verify is not None and not verify(page):
+            last_reason = "verify() 콜백 실패(예상한 요소가 없음)"
+        else:
             return page
         page.close()
-        time.sleep(1)
-    raise RuntimeError(f"scimagojr.com 안착 실패({tries}회 시도), 마지막 URL={last_url}")
+        time.sleep(1.5 * attempt)  # 점점 더 기다렸다 재시도(챌린지가 안정화될 시간을 줌)
+    raise RuntimeError(f"scimagojr.com 안착 실패({tries}회 시도) — {last_reason} (URL={last_url})")
 
 
 def parse_issn_from_detail(body_text: str):
@@ -127,10 +149,28 @@ def parse_issn_from_detail(body_text: str):
     return [f"{c[:4]}-{c[4:]}" for c in codes]
 
 
-def get_detail_issn(ctx, scimago_id: str):
-    page = goto_robust(ctx, f"https://www.scimagojr.com/journalsearch.php?q={scimago_id}&tip=sid&clean=0")
+def parse_sjr_from_detail(body_text: str):
+    """상세페이지의 'SJR 2025\\n1.955\\nQ1' 패턴에서 (SJR 점수, 쿼타일) 추출(실측 확인
+    2026-08-15). 지정 목록 저널도 이 페이지에서 뽑아야 scimago 저널과 **하나의 척도**로
+    비교 가능 — category 테이블에는 지정 목록 저널이 안 나오므로 여기가 유일한 출처."""
+    m = re.search(r"SJR\s+\d{4}\s*\n([\d.]+)\s*\n(Q[1-4])", body_text)
+    if not m:
+        return None, None
+    return float(m.group(1)), m.group(2)
+
+
+def get_detail_info(ctx, scimago_id: str):
+    def verify(p):
+        return "ISSN" in p.inner_text("body")
+
+    page = goto_robust(
+        ctx, f"https://www.scimagojr.com/journalsearch.php?q={scimago_id}&tip=sid&clean=0",
+        verify=verify,
+    )
     try:
-        return parse_issn_from_detail(page.inner_text("body"))
+        body = page.inner_text("body")
+        sjr, quartile = parse_sjr_from_detail(body)
+        return {"issn": parse_issn_from_detail(body), "sjr": sjr, "quartile": quartile}
     finally:
         page.close()
 
@@ -143,7 +183,12 @@ def fetch_scimago_category(ctx, category_id: int, quartiles: list):
     results = []
     for pnum in range(1, 15):  # 안전판 상한
         url = f"https://www.scimagojr.com/journalrank.php?category={category_id}&page={pnum}"
-        page = goto_robust(ctx, url)
+        # 1페이지는 반드시 결과가 있어야 정상(빈 카테고리는 없음) — 챌린지 페이지가 "성공"으로
+        # 위장해 0건을 내는 사고(2026-08-15)를 여기서 막는다. 2페이지부터는 "결과 없음"이
+        # 정상적인 페이지네이션 종료일 수 있어 verify를 걸지 않는다(아래 title_links 체크로 처리).
+        verify = (lambda p: len(p.eval_on_selector_all("td a[href*='journalsearch']", "e=>e")) > 0) \
+            if pnum == 1 else None
+        page = goto_robust(ctx, url, verify=verify)
         rows = page.eval_on_selector_all(
             "table tr",
             "els => els.map(e => e.innerText)"
@@ -240,23 +285,29 @@ def build_journal_universe(force=False):
 
             log.info(f"[journals] Scimago category={category_id} {quartiles} 수집 중...")
             scimago_hits = fetch_scimago_category(ctx, category_id, quartiles)
-            log.info(f"[journals] {len(scimago_hits)}개 발견, ISSN 조회 중...")
+            log.info(f"[journals] {len(scimago_hits)}개 발견, 상세정보(ISSN·SJR) 조회 중...")
             for j in scimago_hits:
-                j["issn"] = get_detail_issn(ctx, j["scimago_id"])
+                info = get_detail_info(ctx, j["scimago_id"])
+                j["issn"] = info["issn"]
+                j["sjr"] = info["sjr"]
+                # 상세페이지 파싱이 성공하면 그 값으로 덮어쓴다 — 실패 시엔 category 테이블에서
+                # 이미 얻어둔 quartile(j["quartile"])이 폴백으로 남는다.
+                if info["quartile"]:
+                    j["quartile"] = info["quartile"]
                 j["source"] = "scimago"
 
-            log.info(f"[journals] 지정 {len(named_specs)}개 저널 ISSN 조회 중...")
+            log.info(f"[journals] 지정 {len(named_specs)}개 저널 상세정보(ISSN·SJR) 조회 중...")
             named = []
             for spec in named_specs:
                 sid = search_journal(ctx, spec["name"], spec.get("country"))
                 if not sid:
                     log.warning(f"[journals] 검색 실패(수동 확인 필요): {spec['name']}")
                     named.append({"name": spec["name"], "scimago_id": None, "issn": [],
-                                  "quartile": None, "source": "named"})
+                                  "sjr": None, "quartile": None, "source": "named"})
                     continue
-                issn = get_detail_issn(ctx, sid)
-                named.append({"name": spec["name"], "scimago_id": sid, "issn": issn,
-                               "quartile": None, "source": "named"})
+                info = get_detail_info(ctx, sid)
+                named.append({"name": spec["name"], "scimago_id": sid, "issn": info["issn"],
+                               "sjr": info["sjr"], "quartile": info["quartile"], "source": "named"})
 
             browser.close()
     finally:
@@ -271,13 +322,28 @@ def build_journal_universe(force=False):
         "category": f"Scimago category id={category_id}, quartiles={quartiles}",
         "journals": named + scimago_dedup,
     }
+
+    # 결과가 이전 캐시보다 눈에 띄게 부실하면(Cloudflare 챌린지가 "성공"으로 위장해 0건/부분
+    # 실패를 낸 경우) 절대 덮어쓰지 않는다 — 2026-08-15에 50개짜리 정상 캐시가 이 가드 없이
+    # 10개짜리 부분실패 결과로 조용히 깨진 사고가 있었다. 실패는 시끄럽게, 이전 값은 안전하게.
+    missing = [j["name"] for j in result["journals"] if not j["issn"]]
+    if os.path.exists(JOURNALS_JSON):
+        with open(JOURNALS_JSON, "r", encoding="utf-8") as f:
+            prev = json.load(f)
+        prev_n = len(prev.get("journals", []))
+        if len(result["journals"]) < prev_n * 0.8 or len(missing) > len(named_specs) // 2:
+            raise RuntimeError(
+                f"[journals] 이번 결과({len(result['journals'])}개, 조회실패 {len(missing)}개)가 "
+                f"이전 캐시({prev_n}개)보다 눈에 띄게 부실함 — Cloudflare 챌린지 오탐 의심. "
+                f"journals.json은 건드리지 않았습니다. 잠시 후 --force로 재시도하세요."
+            )
+
     with open(JOURNALS_JSON, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     log.info(f"[journals] 저장 완료: {len(result['journals'])}개 저널 -> {JOURNALS_JSON}")
 
-    missing_issn = [j["name"] for j in result["journals"] if not j["issn"]]
-    if missing_issn:
-        log.warning(f"[journals] ISSN 조회 실패({len(missing_issn)}개, 수동 확인 필요): {missing_issn}")
+    if missing:
+        log.warning(f"[journals] ISSN 조회 실패({len(missing)}개, 수동 확인 필요): {missing}")
 
     return result
 
@@ -291,6 +357,7 @@ if __name__ == "__main__":
             data = json.load(f)
         print(f"resolved_at={data['resolved_at']}  n={len(data['journals'])}")
         for j in data["journals"]:
-            print(f"  [{j['source']:11s}] {j['name']:60s} ISSN={j['issn']}  Q={j.get('quartile')}")
+            print(f"  [{j['source']:11s}] {j['name']:60s} ISSN={j['issn']}  "
+                  f"SJR={j.get('sjr')}  Q={j.get('quartile')}")
     else:
         build_journal_universe(force="--force" in sys.argv)
