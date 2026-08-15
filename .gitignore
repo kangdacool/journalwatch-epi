@@ -1,0 +1,12 @@
+config.yaml
+.env
+data/raw/*.json
+logs/*.log
+__pycache__/
+*.pyc
+
+# data/seen.json, data/journals.json, archive/papers/*.md 는 일부러 gitignore 대상이 아니다.
+# GitHub Actions로 돌리면 체크아웃마다 디스크가 새로 시작되므로, 이 파일들을 리포에 커밋해
+# 되돌려 넣는 것 자체가 상태 저장소 역할을 한다(다음날 실행이 "무엇을 이미 봤는지" 알려면
+# 필요) — 이 리포가 곧 당신의 아카이브가 된다. 로컬(Windows 작업 스케줄러)로만 돌린다면
+# 커밋 안 해도 무방(로컬 디스크가 상태를 계속 들고 있음).

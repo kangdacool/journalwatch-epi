@@ -1,0 +1,6 @@
+pyyaml
+requests
+playwright
+notion-client
+python-dotenv
+anthropic

@@ -1,0 +1,43 @@
+# config.yaml 로 복사해서 값을 채우세요. config.yaml 은 .gitignore 대상입니다.
+
+journals:
+  refresh_interval_days: 90   # Scimago 목록 재수집 주기(쿼타일은 자주 안 바뀜)
+  scimago_category_id: 2713   # scimagojr.com/journalrank.php?category=NNNN 의 그 숫자.
+                                # 다른 분야로 바꾸려면 사이트에서 카테고리 고르고 URL의 숫자만 복사.
+                                # 2713 = Epidemiology (기본값, 이 랩 예시)
+  scimago_quartiles: ["Q1"]   # 이 카테고리에서 자동으로 끌어올 쿼타일. ["Q1","Q2"]처럼 확장 가능
+  named:                       # 쿼타일과 무관하게 무조건 포함할 저널(직접 골라 넣는 목록)
+    - name: "American Journal of Epidemiology"
+    - name: "International Journal of Epidemiology"
+    - name: "Epidemiology"
+      country: "United States"   # 동명이의 저널이 있을 때만 필요(구분용 힌트)
+    - name: "Epidemiology and Health"
+      country: "South Korea"
+    - name: "Lancet Public Health"
+    - name: "Journal of Preventive Medicine and Public Health"
+      country: "South Korea"
+    - name: "European Journal of Epidemiology"
+    - name: "Annals of Epidemiology"
+    - name: "American Journal of Public Health"
+    - name: "PLOS Medicine"
+
+pubmed:
+  email: "your_email@example.com"   # NCBI 예의 규정상 필수(연락처 용도, 없어도 동작은 함)
+  api_key: ""                        # 선택. 있으면 10 req/sec, 없으면 3 req/sec
+  lookback_days: 3                   # PubMed 등재 지연 흡수용 조회 겹침 기간
+
+curation:
+  backend: "claude_cli"   # "claude_cli"(로컬 Claude Code 헤드리스, 구독만 있으면 됨) 또는
+                            # "anthropic_api"(ANTHROPIC_API_KEY 필요, GitHub Actions 등 어디서나 동작)
+  model: "claude-sonnet-5"      # 두 백엔드 공통으로 쓰는 모델명
+  max_budget_usd: 1.00          # claude_cli 백엔드: 호출당 상한(달러), anthropic_api는 미사용
+  max_tokens: 8000               # anthropic_api 백엔드: 응답 토큰 상한, claude_cli는 미사용
+  interest_tags:
+    - "causal inference"
+    - "target trial emulation"
+    - "biological aging / epigenetic clocks"
+    - "chronic disease multimorbidity"
+    - "environmental epidemiology"
+
+notion:
+  parent_page_id: ""   # notion_sync.py 상단 준비 절차 참조. 비워두면 Notion push는 생략됨.

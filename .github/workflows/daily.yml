@@ -1,0 +1,44 @@
+name: Daily journal watch
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # 07:00 KST (UTC+9) — 필요하면 시각만 바꾸세요
+  workflow_dispatch: {}     # Actions 탭에서 수동 실행 버튼
+
+permissions:
+  contents: write   # data/state·archive 커밋용
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # journals.py(Scimago 스크레이핑, Chrome 필요)는 daily 워크플로가 안 돌린다 — 로컬에서
+      # 가끔(기본 90일) 실행해 만든 data/journals.json을 저장소에 커밋해두고 여기서는 읽기만 함.
+      - name: Install Python dependencies (no browser)
+        run: pip install pyyaml requests notion-client python-dotenv anthropic
+
+      - name: Prepare config
+        run: cp config.example.yaml config.yaml
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          JOURNALWATCH_PUBMED_EMAIL: ${{ vars.PUBMED_EMAIL }}
+          JOURNALWATCH_NOTION_PARENT_PAGE_ID: ${{ vars.NOTION_PARENT_PAGE_ID }}
+          JOURNALWATCH_CURATION_BACKEND: anthropic_api
+        run: python src/run_daily.py
+
+      - name: Commit updated state + archive
+        run: |
+          git config user.name "journalwatch-epi bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/seen.json archive/papers/ || true
+          git diff --cached --quiet || git commit -m "chore: daily journal watch update"
+          git push

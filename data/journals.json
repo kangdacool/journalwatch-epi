@@ -1,0 +1,492 @@
+{
+  "resolved_at": "2026-08-15T16:41:08.437887",
+  "category": "Epidemiology (Scimago id=2713)",
+  "journals": [
+    {
+      "name": "American Journal of Epidemiology",
+      "scimago_id": "27058",
+      "issn": [
+        "0002-9262",
+        "1476-6256"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "International Journal of Epidemiology",
+      "scimago_id": "14750",
+      "issn": [
+        "0300-5771",
+        "1464-3685"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "Epidemiology",
+      "scimago_id": "20717",
+      "issn": [
+        "1044-3983",
+        "1531-5487"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "Epidemiology and Health",
+      "scimago_id": "21100774318",
+      "issn": [
+        "2092-7193"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "Lancet Public Health",
+      "scimago_id": "21100804406",
+      "issn": [
+        "2468-2667"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "Journal of Preventive Medicine and Public Health",
+      "scimago_id": "4400151412",
+      "issn": [
+        "1975-8375",
+        "2233-4521"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "European Journal of Epidemiology",
+      "scimago_id": "13213",
+      "issn": [
+        "0393-2990",
+        "1573-7284"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "Annals of Epidemiology",
+      "scimago_id": "19569",
+      "issn": [
+        "1047-2797",
+        "1873-2585"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "American Journal of Public Health",
+      "scimago_id": "19561",
+      "issn": [
+        "0090-0036",
+        "1541-0048"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "PLOS Medicine",
+      "scimago_id": "144840",
+      "issn": [
+        "1549-1277",
+        "1549-1676"
+      ],
+      "quartile": null,
+      "source": "named"
+    },
+    {
+      "name": "MMWR Recommendations and Reports",
+      "scimago_id": "19434",
+      "quartile": "Q1",
+      "issn": [
+        "1057-5987",
+        "1545-8601"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "MMWR Surveillance Summaries",
+      "scimago_id": "71056",
+      "quartile": "Q1",
+      "issn": [
+        "1545-8636",
+        "1546-0738"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Morbidity and Mortality Weekly Report",
+      "scimago_id": "110092",
+      "quartile": "Q1",
+      "issn": [
+        "0149-2195",
+        "1545-861X"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Clinical Microbiology Reviews",
+      "scimago_id": "19651",
+      "quartile": "Q1",
+      "issn": [
+        "0893-8512",
+        "1098-6618"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "The Lancet HIV",
+      "scimago_id": "21100369870",
+      "quartile": "Q1",
+      "issn": [
+        "2352-3018"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Alzheimer's and Dementia",
+      "scimago_id": "3600148102",
+      "quartile": "Q1",
+      "issn": [
+        "1552-5260",
+        "1552-5279"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of the American Society of Nephrology",
+      "scimago_id": "19370",
+      "quartile": "Q1",
+      "issn": [
+        "1046-6673",
+        "1533-3450"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Eurosurveillance",
+      "scimago_id": "21872",
+      "quartile": "Q1",
+      "issn": [
+        "1025-496X",
+        "1560-7917"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "European Journal of Preventive Cardiology",
+      "scimago_id": "21100211738",
+      "quartile": "Q1",
+      "issn": [
+        "2047-4873",
+        "2047-4881"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Clinical Epidemiology",
+      "scimago_id": "15857",
+      "quartile": "Q1",
+      "issn": [
+        "0895-4356",
+        "1878-5921"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Clinical Journal of the American Society of Nephrology",
+      "scimago_id": "7600153101",
+      "quartile": "Q1",
+      "issn": [
+        "1555-9041",
+        "1555-905X"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Emerging Microbes and Infections",
+      "scimago_id": "21100232818",
+      "quartile": "Q1",
+      "issn": [
+        "2222-1751"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Communications Medicine",
+      "scimago_id": "21101215100",
+      "quartile": "Q1",
+      "issn": [
+        "2730-664X"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Epidemiology and Psychiatric Sciences",
+      "scimago_id": "19900192160",
+      "quartile": "Q1",
+      "issn": [
+        "2045-7960",
+        "2045-7979"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Emerging Infectious Diseases",
+      "scimago_id": "20228",
+      "quartile": "Q1",
+      "issn": [
+        "1080-6040",
+        "1080-6059"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "American Journal of Preventive Medicine",
+      "scimago_id": "27063",
+      "quartile": "Q1",
+      "issn": [
+        "0749-3797",
+        "1873-2607"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Exposure Science and Environmental Epidemiology",
+      "scimago_id": "4400151701",
+      "quartile": "Q1",
+      "issn": [
+        "1559-0631",
+        "1559-064X"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Epidemiologic Reviews",
+      "scimago_id": "13140",
+      "quartile": "Q1",
+      "issn": [
+        "0193-936X",
+        "1478-6729"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Clinical Epidemiology",
+      "scimago_id": "19700175052",
+      "quartile": "Q1",
+      "issn": [
+        "1179-1349"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Health Monitoring",
+      "scimago_id": "21101329141",
+      "quartile": "Q1",
+      "issn": [
+        "2511-2708"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Influenza and other Respiratory Viruses",
+      "scimago_id": "13900154714",
+      "quartile": "Q1",
+      "issn": [
+        "1750-2640",
+        "1750-2659"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Social Psychiatry and Psychiatric Epidemiology",
+      "scimago_id": "19841",
+      "quartile": "Q1",
+      "issn": [
+        "0933-7954",
+        "1433-9285"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Microbial Genomics",
+      "scimago_id": "21100870279",
+      "quartile": "Q1",
+      "issn": [
+        "2057-5858"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Global Health Research and Policy",
+      "scimago_id": "21101041403",
+      "quartile": "Q1",
+      "issn": [
+        "2397-0642"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "GeoHealth",
+      "scimago_id": "21100924773",
+      "quartile": "Q1",
+      "issn": [
+        "2471-1403"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Neuroepidemiology",
+      "scimago_id": "17494",
+      "quartile": "Q1",
+      "issn": [
+        "0251-5350",
+        "1423-0208"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Epidemiology and Community Health",
+      "scimago_id": "15896",
+      "quartile": "Q1",
+      "issn": [
+        "0143-005X",
+        "1470-2738"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "BMC Medical Research Methodology",
+      "scimago_id": "28110",
+      "quartile": "Q1",
+      "issn": [
+        "1471-2288"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Cancer Epidemiology Biomarkers and Prevention",
+      "scimago_id": "29124",
+      "quartile": "Q1",
+      "issn": [
+        "1055-9965",
+        "1538-7755"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Preventive Medicine",
+      "scimago_id": "17665",
+      "quartile": "Q1",
+      "issn": [
+        "0091-7435",
+        "1096-0260"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Global Heart",
+      "scimago_id": "21100212900",
+      "quartile": "Q1",
+      "issn": [
+        "2211-8160",
+        "2211-8179"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Genetic Epidemiology",
+      "scimago_id": "22162",
+      "quartile": "Q1",
+      "issn": [
+        "0741-0395",
+        "1098-2272"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Population Health Metrics",
+      "scimago_id": "22494",
+      "quartile": "Q1",
+      "issn": [
+        "1478-7954"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Health Promotion and Chronic Disease Prevention in Canada : Research, Policy and Practice",
+      "scimago_id": "21100433204",
+      "quartile": "Q1",
+      "issn": [
+        "2368-738X"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Paediatric and Perinatal Epidemiology",
+      "scimago_id": "15634",
+      "quartile": "Q1",
+      "issn": [
+        "0269-5022",
+        "1365-3016"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Health Care Science",
+      "scimago_id": "21101178594",
+      "quartile": "Q1",
+      "issn": [
+        "2771-1749",
+        "2771-1757"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Environmental Epidemiology",
+      "scimago_id": "21101056819",
+      "quartile": "Q1",
+      "issn": [
+        "2474-7882"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Epidemiology",
+      "scimago_id": "15894",
+      "quartile": "Q1",
+      "issn": [
+        "0917-5040",
+        "1349-9092"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Statistics in Medicine",
+      "scimago_id": "20086",
+      "quartile": "Q1",
+      "issn": [
+        "0277-6715",
+        "1097-0258"
+      ],
+      "source": "scimago_q1"
+    },
+    {
+      "name": "Journal of Epidemiology and Global Health",
+      "scimago_id": "20500195056",
+      "quartile": "Q1",
+      "issn": [
+        "2210-6006",
+        "2210-6014"
+      ],
+      "source": "scimago_q1"
+    }
+  ]
+}
