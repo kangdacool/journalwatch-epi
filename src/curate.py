@@ -115,7 +115,7 @@ def build_prompt(papers, interest_tags):
     return "\n".join(lines)
 
 
-def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
+def call_claude_headless(prompt: str, cfg_curation: dict, schema: dict, **_ignored) -> dict:
     """
     --safe-mode: CLAUDE.md/스킬/훅/MCP 등 이 사용자의 방대한 전역 설정을 로드하지 않는다
     (2026-08-15 실측: --safe-mode 없이 호출하면 전역 CLAUDE.md 캐시생성만 5.7만 토큰 —
@@ -123,6 +123,12 @@ def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
     그대로 쓴다(이 사용자는 API 키가 없고 구독 로그인만 있음 — --bare는 API 키 필수라 못 씀).
     응답의 structured_output 필드에 스키마 그대로 파싱된 객체가 들어온다(실측 확인,
     result 필드를 재파싱할 필요 없음).
+
+    schema: 이 호출에 강제할 JSON 스키마 — curate()는 판정 SCHEMA를, rank_top.py는 자기
+    랭킹 스키마를 넘긴다. 이 함수는 어느 쪽인지 모른다(범용 호출기). **_ignored는
+    call_anthropic_api와 같은 위치인자로 BACKENDS[name](prompt, cfg, schema, tool_name=...,
+    tool_description=...)처럼 호출부가 통일된 시그니처로 부를 수 있게 하되, 이 백엔드는
+    tool_name/tool_description을 안 써서 그냥 버린다(--json-schema 방식이라 도구 이름이 없음).
     """
     model = cfg_curation.get("model", "claude-sonnet-5")
     max_budget = cfg_curation.get("max_budget_usd", 1.00)
@@ -134,7 +140,7 @@ def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
     cmd = [
         "claude", "--safe-mode", "-p",
         "--output-format", "json",
-        "--json-schema", json.dumps(SCHEMA),
+        "--json-schema", json.dumps(schema),
         "--model", model,
         "--max-budget-usd", str(max_budget),
     ]
@@ -148,7 +154,10 @@ def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
     return outer["structured_output"]
 
 
-def call_anthropic_api(prompt: str, cfg_curation: dict) -> dict:
+def call_anthropic_api(prompt: str, cfg_curation: dict, schema: dict,
+                        tool_name: str = "submit_assessments",
+                        tool_description: str = "각 논문의 주목도 판정을 제출한다.",
+                        **_ignored) -> dict:
     """
     Anthropic Messages API를 도구강제(tool_choice) 방식으로 호출해 구조화 JSON을 받는다 —
     claude_cli 백엔드의 --json-schema와 동등한 효과(모델이 반드시 이 스키마의 도구를 호출하게
@@ -156,6 +165,9 @@ def call_anthropic_api(prompt: str, cfg_curation: dict) -> dict:
     포함) — 그래서 공개 저장소의 기본 경로다. ⚠ 이 사용자는 API 키가 없어 실계정으로 실행
     검증은 못 했다(코드는 문서화된 표준 패턴 그대로) — 처음 쓰는 사람은 반드시 --dry-run 대신
     소량 배치로 먼저 실제 호출해 볼 것.
+
+    schema/tool_name/tool_description: 호출부(curate() 또는 rank_top.py)가 넘기는 스키마와
+    도구 이름 — 이 함수는 범용 호출기라 어느 쪽인지 모른다.
     """
     import anthropic
 
@@ -168,21 +180,21 @@ def call_anthropic_api(prompt: str, cfg_curation: dict) -> dict:
     client = anthropic.Anthropic(api_key=api_key)
 
     tool = {
-        "name": "submit_assessments",
-        "description": "각 논문의 주목도 판정을 제출한다.",
-        "input_schema": SCHEMA,
+        "name": tool_name,
+        "description": tool_description,
+        "input_schema": schema,
     }
     resp = client.messages.create(
         model=model,
         max_tokens=max_tokens,
         tools=[tool],
-        tool_choice={"type": "tool", "name": "submit_assessments"},
+        tool_choice={"type": "tool", "name": tool_name},
         messages=[{"role": "user", "content": prompt}],
     )
     for block in resp.content:
-        if block.type == "tool_use" and block.name == "submit_assessments":
+        if block.type == "tool_use" and block.name == tool_name:
             return block.input
-    raise RuntimeError(f"submit_assessments 도구 호출을 찾지 못함: {resp.content}")
+    raise RuntimeError(f"{tool_name} 도구 호출을 찾지 못함: {resp.content}")
 
 
 BACKENDS = {
@@ -212,7 +224,10 @@ def curate(papers, cfg, dry_run=False):
     for i, chunk in enumerate(chunks, 1):
         log.info(f"[curate] 배치 {i}/{len(chunks)} 판정 중 ({len(chunk)}편)...")
         prompt = build_prompt(chunk, interest_tags)
-        payload = BACKENDS[backend_name](prompt, cfg_curation)
+        payload = BACKENDS[backend_name](
+            prompt, cfg_curation, SCHEMA,
+            tool_name="submit_assessments", tool_description="각 논문의 주목도 판정을 제출한다.",
+        )
         all_assessments.extend(payload.get("assessments", []))
     return all_assessments
 

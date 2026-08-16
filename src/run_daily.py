@@ -16,6 +16,7 @@ import journals as journals_mod
 import fetch_pubmed
 import curate
 import archive
+import rank_top
 import notion_sync
 
 log = get_logger()
@@ -54,9 +55,19 @@ def run(dry_run=False):
     # 3) 아카이브(로컬 정본)
     written = archive.archive_notable(papers, assessments)
 
+    # 3.5) 이번 주 Top N 추천 — notable set(이미 소량)만 대상으로 한 번 더 판정하는 가벼운 콜.
+    # 실패해도 다이제스트 본체는 살려야 하므로 여기서 죽지 않고 top_picks=None으로 계속 진행.
+    try:
+        top_picks = rank_top.pick_top(papers, assessments, cfg)
+        with open(os.path.join(RAW_DIR, f"topn_{stamp}.json"), "w", encoding="utf-8") as f:
+            json.dump(top_picks, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        log.error(f"[run_daily] Top N 산출 실패(다이제스트는 Top N 없이 계속): {e}")
+        top_picks = None
+
     # 4) Notion push
     try:
-        notion_sync.push_digest(written)
+        notion_sync.push_digest(written, top_picks=top_picks)
     except Exception as e:
         log.error(f"[run_daily] Notion push 실패(로컬 아카이브는 이미 완료): {e}")
 

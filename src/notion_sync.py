@@ -118,7 +118,34 @@ def _group_by_primary_category(written_pairs):
     return groups
 
 
-def build_digest_markdown(written_pairs: list) -> str:
+def _build_top_section(written_pairs: list, top_picks: list) -> list:
+    """top_picks(rank_top.pick_top()의 반환값)를 다이제스트 맨 위 강조 섹션으로 렌더링.
+    written_pairs와 매칭 안 되는 pmid(오타·재실행 간 불일치 등)는 조용히 건너뛴다."""
+    by_pmid = {p["pmid"]: (p, a) for p, a in written_pairs}
+    lines = [f"# ⭐ 이번 주 Top {len(top_picks)}", ""]
+    for pick in top_picks:
+        pa = by_pmid.get(pick.get("pmid"))
+        if not pa:
+            log.warning(f"[notion] top pick pmid={pick.get('pmid')}가 notable 목록에 없음 — 건너뜀")
+            continue
+        paper, assessment = pa
+        title = bullet_text(paper.get("title", "(제목 없음)"))
+        lines.append(f"### {pick.get('rank', '?')}. {title}")
+        lines.append("")
+        lines.append(f"**{paper.get('journal', '')}**")
+        lines.append("")
+        lines.append(pick.get("why_top", ""))
+        lines.append("")
+        pmid = paper.get("pmid", "")
+        lines.append(f"[PubMed](https://pubmed.ncbi.nlm.nih.gov/{pmid}/)"
+                      + (f" · [DOI](https://doi.org/{paper['doi']})" if paper.get("doi") else ""))
+        lines.append("")
+    lines.append("---")
+    lines.append("")
+    return lines
+
+
+def build_digest_markdown(written_pairs: list, top_picks: list = None) -> str:
     n = len(written_pairs)
     # 아래 그룹 헤더와 숫자가 어긋나면 헷갈리니, 요약 tally도 "주(첫번째) 범주" 기준으로 센다
     # (한 논문이 여러 범주에 해당해도 그룹에는 한 번만 들어가는 것과 맞춘다).
@@ -134,9 +161,11 @@ def build_digest_markdown(written_pairs: list) -> str:
         "",
         f"**notable {n}편** — {tally_str}",
         "",
-        _TOC_MARKER,
-        "",
     ]
+    if top_picks:
+        lines.extend(_build_top_section(written_pairs, top_picks))
+    lines.append(_TOC_MARKER)
+    lines.append("")
 
     # ----- 요약표: 저널별로 묶어서(매일 같은 순서라 눈에 익음) 한눈에 스캔 -----
     journal_order = _load_journal_order()
@@ -215,7 +244,7 @@ def _insert_toc_block(notion: Client, page_id: str):
     notion.request(path=f"blocks/{marker_block_id}", method="delete")
 
 
-def push_digest(written_pairs: list):
+def push_digest(written_pairs: list, top_picks: list = None):
     if not written_pairs:
         log.info("[notion] notable 0건 — 페이지 생성 생략")
         return None
@@ -227,7 +256,7 @@ def push_digest(written_pairs: list):
         return None
 
     notion = get_client()
-    md = build_digest_markdown(written_pairs)
+    md = build_digest_markdown(written_pairs, top_picks=top_picks)
     resp = notion.request(
         path="pages", method="post",
         body={
@@ -256,4 +285,16 @@ if __name__ == "__main__":
         assessments = json.load(f)
     by_pmid = {p["pmid"]: p for p in papers}
     pairs = [(by_pmid[a["pmid"]], a) for a in assessments if a.get("notable") and a["pmid"] in by_pmid]
-    push_digest(pairs)
+
+    # topn_<stamp>.json이 이미 있으면(rank_top.py를 먼저 돌려뒀으면) 재사용, 없으면 이 자리에서
+    # 즉석 계산(수동 재실행 편의 — run_daily.py 파이프라인 밖에서 이 스크립트만 단독 실행할 때도
+    # Top N이 빠지지 않게).
+    topn_path = os.path.join(RAW_DIR, f"topn_{stamp}.json")
+    if os.path.exists(topn_path):
+        with open(topn_path, "r", encoding="utf-8") as f:
+            top_picks = json.load(f)
+    else:
+        import rank_top
+        top_picks = rank_top.pick_top(papers, assessments, load_config())
+
+    push_digest(pairs, top_picks=top_picks)

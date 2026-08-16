@@ -33,6 +33,8 @@ curation:
   model: "claude-sonnet-5"      # 두 백엔드 공통으로 쓰는 모델명
   max_budget_usd: 1.00          # claude_cli 백엔드: 호출당 상한(달러), anthropic_api는 미사용
   max_tokens: 8000               # anthropic_api 백엔드: 응답 토큰 상한, claude_cli는 미사용
+  top_n: 10                      # 다이제스트 맨 위에 별도로 뽑는 이번 주 추천 편수
+                                  # (notable이 이보다 적으면 랭킹 콜 없이 전부 상위권으로 취급)
   interest_tags:
     - "causal inference"
     - "target trial emulation"
