@@ -132,9 +132,10 @@ def _build_top_section(written_pairs: list, top_picks: list) -> list:
         title = bullet_text(paper.get("title", "(제목 없음)"))
         lines.append(f"### {pick.get('rank', '?')}. {title}")
         lines.append("")
+        # why_top(비교 근거)은 여기서 안 보여준다 — 같은 논문이 아래 상세 섹션에 이미 reasoning/
+        # one_line_summary로 나오므로 이 문서 안에서는 중복. 허브의 통합 Top 픽 문서는 유일한
+        # 설명이라 거기서는 그대로 보여준다(build_master_top.py의 build_section 참조).
         lines.append(f"**{paper.get('journal', '')}**")
-        lines.append("")
-        lines.append(pick.get("why_top", ""))
         lines.append("")
         pmid = paper.get("pmid", "")
         lines.append(f"[PubMed](https://pubmed.ncbi.nlm.nih.gov/{pmid}/)"

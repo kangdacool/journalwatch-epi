@@ -65,9 +65,13 @@ def run(dry_run=False):
         log.error(f"[run_daily] Top N 산출 실패(다이제스트는 Top N 없이 계속): {e}")
         top_picks = None
 
-    # 4) Notion push
+    # 4) Notion push — page_id를 파일로 남긴다. 이 저장소는 단일 파이프라인 템플릿이라 자체적으로는
+    # 안 쓰지만, 여러 인스턴스를 나란히 돌리는 사용자가 취합 문서를 만들 때 재사용하기 좋다.
     try:
-        notion_sync.push_digest(written, top_picks=top_picks)
+        page_id = notion_sync.push_digest(written, top_picks=top_picks)
+        if page_id:
+            with open(os.path.join(RAW_DIR, f"digest_page_id_{stamp}.txt"), "w", encoding="utf-8") as f:
+                f.write(page_id)
     except Exception as e:
         log.error(f"[run_daily] Notion push 실패(로컬 아카이브는 이미 완료): {e}")
 
