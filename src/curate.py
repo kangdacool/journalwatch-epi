@@ -118,6 +118,9 @@ def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
     """
     model = cfg_curation.get("model", "claude-sonnet-5")
     max_budget = cfg_curation.get("max_budget_usd", 1.00)
+    # 고정 600초는 큰 배치(실측: 270편에서 타임아웃)엔 부족 — config.yaml의
+    # curation.timeout_seconds로 조절 가능하게(기본 1800초 = 30분).
+    timeout_seconds = cfg_curation.get("timeout_seconds", 1800)
     # 프롬프트를 CLI 인자로 넘기면 Windows CreateProcess의 명령줄 길이 한도(약 32767자)를
     # 넘어 WinError 206으로 죽는다(실측 확인, 106편 배치에서 재현) — stdin으로 넘긴다.
     cmd = [
@@ -128,7 +131,7 @@ def call_claude_headless(prompt: str, cfg_curation: dict) -> dict:
         "--max-budget-usd", str(max_budget),
     ]
     result = subprocess.run(cmd, input=prompt, capture_output=True, text=True,
-                             encoding="utf-8", timeout=600)
+                             encoding="utf-8", timeout=timeout_seconds)
     if result.returncode != 0:
         raise RuntimeError(f"claude -p 실패(rc={result.returncode}): {result.stderr[:2000]}")
     outer = json.loads(result.stdout)
@@ -183,15 +186,27 @@ BACKENDS = {
 def curate(papers, cfg, dry_run=False):
     cfg_curation = cfg.get("curation", {})
     interest_tags = cfg_curation.get("interest_tags", DEFAULT_INTEREST_TAGS)
-    prompt = build_prompt(papers, interest_tags)
+
     if dry_run:
-        print(prompt)
+        print(build_prompt(papers, interest_tags))
         return None
+
     backend_name = cfg_curation.get("backend", "claude_cli")
     if backend_name not in BACKENDS:
         raise ValueError(f"알 수 없는 curation.backend={backend_name!r} — {list(BACKENDS)} 중 하나")
-    payload = BACKENDS[backend_name](prompt, cfg_curation)
-    return payload.get("assessments", [])
+
+    # 한 프롬프트에 너무 많은 논문을 몰아넣으면(실측: 270편 한 배치, ~40만자) 응답이 10분을
+    # 넘겨도 안 끝나거나 원인불명 실패(rc=1, 빈 stderr)로 죽는다 — chunk_size(기본 40)로 쪼개서
+    # 순차 호출한다. 이례적으로 큰 배치(초기 백필 등)에 특히 중요.
+    chunk_size = cfg_curation.get("chunk_size", 40)
+    all_assessments = []
+    chunks = [papers[i:i + chunk_size] for i in range(0, len(papers), chunk_size)]
+    for i, chunk in enumerate(chunks, 1):
+        log.info(f"[curate] 배치 {i}/{len(chunks)} 판정 중 ({len(chunk)}편)...")
+        prompt = build_prompt(chunk, interest_tags)
+        payload = BACKENDS[backend_name](prompt, cfg_curation)
+        all_assessments.extend(payload.get("assessments", []))
+    return all_assessments
 
 
 if __name__ == "__main__":
