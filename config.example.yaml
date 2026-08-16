@@ -24,7 +24,8 @@ journals:
 pubmed:
   email: "your_email@example.com"   # NCBI 예의 규정상 필수(연락처 용도, 없어도 동작은 함)
   api_key: ""                        # 선택. 있으면 10 req/sec, 없으면 3 req/sec
-  lookback_days: 3                   # PubMed 등재 지연 흡수용 조회 겹침 기간
+  lookback_days: 10                  # 실행주기(예: 주간=7일) + PubMed 등재 지연 흡수 버퍼.
+                                       # 매일 실행이면 3 정도로 낮춰도 됨 — 실행주기보다만 크면 됨.
 
 curation:
   backend: "claude_cli"   # "claude_cli"(로컬 Claude Code 헤드리스, 구독만 있으면 됨) 또는

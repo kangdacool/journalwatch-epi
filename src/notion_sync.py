@@ -27,7 +27,7 @@ import json
 from dotenv import load_dotenv
 from notion_client import Client
 
-from common import load_config, get_logger, PROJ_ROOT, DATA_DIR, today_stamp
+from common import load_config, get_logger, PROJ_ROOT, DATA_DIR, today_stamp, week_range_stamp
 
 log = get_logger()
 load_dotenv(os.path.join(PROJ_ROOT, ".env"))
@@ -114,7 +114,7 @@ def build_digest_markdown(written_pairs: list) -> str:
     )
 
     lines = [
-        f"# {today_stamp()} 예방의학/역학 주목 논문",
+        f"# {week_range_stamp()} 예방의학/역학 주목 논문",
         "",
         f"**notable {n}편** — {tally_str}",
         "",
@@ -216,7 +216,7 @@ def push_digest(written_pairs: list):
         path="pages", method="post",
         body={
             "parent": {"page_id": parent_id},
-            "properties": {"title": {"title": [{"text": {"content": f"{today_stamp()} Epi 저널 다이제스트"}}]}},
+            "properties": {"title": {"title": [{"text": {"content": f"{week_range_stamp()} Epi 저널 다이제스트"}}]}},
             "markdown": md,
         },
     )
