@@ -1,9 +1,13 @@
 name: Daily journal watch
 
 on:
-  schedule:
-    - cron: "0 22 * * *"   # 07:00 KST (UTC+9) — 필요하면 시각만 바꾸세요
-  workflow_dispatch: {}     # Actions 탭에서 수동 실행 버튼
+  # 스케줄은 기본으로 꺼져 있습니다. 이 저장소의 원저자는 로컬 claude_cli 경로를 씁니다 — 이
+  # 워크플로가 origin에서 무인으로 매일 크론 실행되면 ANTHROPIC_API_KEY가 없어 매번 실패
+  # 메일만 보냅니다(2026-08-16 실측). fork해서 이 방식을 쓰실 분은 아래 schedule 줄의 주석을
+  # 풀고 Settings → Secrets and variables → Actions에 ANTHROPIC_API_KEY(필수)를 먼저 등록하세요.
+  # schedule:
+  #   - cron: "0 22 * * *"   # 07:00 KST (UTC+9) — 필요하면 시각만 바꾸세요
+  workflow_dispatch: {}     # Actions 탭에서 수동 실행 버튼(테스트용, 항상 사용 가능)
 
 permissions:
   contents: write   # data/state·archive 커밋용

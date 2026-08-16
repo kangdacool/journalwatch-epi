@@ -67,8 +67,11 @@ API 키 하나로 어디서나 돌아갑니다** — 이 저장소를 fork한 �
    - Secret `NOTION_TOKEN` (선택, Notion 다이제스트를 쓸 경우)
    - Variable `PUBMED_EMAIL` (권장, NCBI 예의 규정)
    - Variable `NOTION_PARENT_PAGE_ID` (선택)
-2. **Actions** 탭에서 워크플로를 한 번 수동 실행(`workflow_dispatch`)해 확인
-3. 이후 매일 자동 실행 — **CI는 매번 새 디스크로 시작하므로, 실행마다 `data/seen.json`과
+2. `.github/workflows/daily.yml`의 `schedule:` 줄 주석을 푸세요 — **기본적으로 꺼져 있습니다**
+   (원저자는 로컬 `claude_cli` 경로를 쓰므로, secrets 없이 이 저장소만 fork해도 매일 무인
+   실행되다가 키 없음으로 실패 메일만 쌓이는 걸 막기 위함). 1번을 먼저 하고 풀 것.
+3. **Actions** 탭에서 워크플로를 한 번 수동 실행(`workflow_dispatch`)해 확인
+4. 이후 매일 자동 실행 — **CI는 매번 새 디스크로 시작하므로, 실행마다 `data/seen.json`과
    `archive/papers/*.md`를 저장소에 커밋해 되돌려 넣습니다. 이 저장소 자체가 곧 당신의
    아카이브가 됩니다** (fork니까 당신 것입니다).
 
