@@ -27,7 +27,8 @@ import json
 from dotenv import load_dotenv
 from notion_client import Client
 
-from common import load_config, get_logger, PROJ_ROOT, DATA_DIR, today_stamp, week_range_stamp
+from common import load_config, get_logger, PROJ_ROOT, DATA_DIR, today_stamp
+import state as state_mod
 
 log = get_logger()
 load_dotenv(os.path.join(PROJ_ROOT, ".env"))
@@ -48,6 +49,19 @@ CATEGORY_ORDER = ["A", "B", "C", "D", None]  # None = 범주 미기재(이론상
 
 def bullet_text(s: str) -> str:
     return _RE_LEADING_NUM.sub(lambda m: m.group(1) + "\\. ", s or "")
+
+
+def _actual_sweep_range_stamp() -> str:
+    """다이제스트 본문에 표시할 실제 조회창(edat mindate~maxdate) — cosmetic 근사치가 아니라
+    fetch_pubmed.py가 이번 실행에 실제로 쓴 것과 정확히 같은 값. notion_sync는 run_daily.py에서
+    state 저장(add_seen/mark_run_success) 전에 호출되므로, 여기서 state를 다시 읽어도 이번
+    실행의 fetch가 봤던 것과 동일한 last_run_date 기준으로 재계산된다(같은 함수 재사용,
+    로직 중복·드리프트 없음)."""
+    cfg = load_config()
+    lookback_days = cfg.get("pubmed", {}).get("lookback_days", 10)
+    st = state_mod.load_state()
+    mindate, maxdate = state_mod.get_fetch_window(st, lookback_days)
+    return f"{mindate.strftime('%y%m%d')}-{maxdate.strftime('%y%m%d')}"
 
 
 def _table_cell(s: str, max_len: int = 70) -> str:
@@ -114,7 +128,9 @@ def build_digest_markdown(written_pairs: list) -> str:
     )
 
     lines = [
-        f"# {week_range_stamp()} 예방의학/역학 주목 논문",
+        f"# {today_stamp()} 예방의학/역학 주목 논문",
+        "",
+        f"조회 기간: {_actual_sweep_range_stamp()} (edat)",
         "",
         f"**notable {n}편** — {tally_str}",
         "",
@@ -216,7 +232,7 @@ def push_digest(written_pairs: list):
         path="pages", method="post",
         body={
             "parent": {"page_id": parent_id},
-            "properties": {"title": {"title": [{"text": {"content": f"{week_range_stamp()} Epi 저널 다이제스트"}}]}},
+            "properties": {"title": {"title": [{"text": {"content": f"{today_stamp()} Epi 저널 다이제스트"}}]}},
             "markdown": md,
         },
     )

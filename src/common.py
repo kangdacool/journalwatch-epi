@@ -76,11 +76,3 @@ def get_logger(name: str = "journalwatch") -> logging.Logger:
 
 def today_stamp() -> str:
     return datetime.now().strftime("%y%m%d")
-
-
-def week_range_stamp(days: int = 6) -> str:
-    """주간 다이제스트 제목용 — '오늘로부터 days일 전 ~ 오늘'. 실제 edat 조회창(lookback_days,
-    등재지연 버퍼 포함)과는 별개로 "이번 주" 표시용 고정 7일(기본) 창."""
-    from datetime import timedelta
-    start = datetime.now() - timedelta(days=days)
-    return f"{start.strftime('%y%m%d')}-{today_stamp()}"
