@@ -216,7 +216,7 @@ def push_digest(written_pairs: list):
         path="pages", method="post",
         body={
             "parent": {"page_id": parent_id},
-            "properties": {"title": {"title": [{"text": {"content": f"{today_stamp()} 저널 다이제스트"}}]}},
+            "properties": {"title": {"title": [{"text": {"content": f"{today_stamp()} Epi 저널 다이제스트"}}]}},
             "markdown": md,
         },
     )
